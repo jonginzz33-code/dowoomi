@@ -1,0 +1,49 @@
+{
+  "expo": {
+    "name": "카드 도감",
+    "slug": "cardbook",
+    "scheme": "cardbook",
+    "version": "0.1.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "ios": {
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.jonginzz.cardbook",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#1E1A4D",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false,
+      "permissions": [
+        "CAMERA"
+      ],
+      "blockedPermissions": [
+        "android.permission.SYSTEM_ALERT_WINDOW",
+        "android.permission.RECORD_AUDIO"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-router",
+      "expo-image",
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "카드 사진을 앨범에서 가져오기 위해 사진 접근 권한이 필요해요.",
+          "cameraPermission": "가지고 있는 카드를 찍어서 도감에 채우기 위해 카메라 권한이 필요해요.",
+          "microphonePermission": false
+        }
+      ]
+    ],
+    "experiments": {
+      "typedRoutes": true
+    }
+  }
+}

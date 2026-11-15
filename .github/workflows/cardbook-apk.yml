@@ -1,0 +1,51 @@
+name: Cardbook APK
+
+# cardbook/ 폴더가 바뀔 때만 카드 도감 앱 APK를 빌드합니다.
+on:
+  push:
+    paths:
+      - 'cardbook/**'
+      - '.github/workflows/cardbook-apk.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: cardbook
+    steps:
+      - name: 소스 가져오기
+        uses: actions/checkout@v4
+
+      - name: Node 설치
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: cardbook/package-lock.json
+
+      - name: 자바 17 설치
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: 패키지 설치
+        run: npm ci
+
+      - name: 타입 검사
+        run: npx tsc --noEmit
+
+      - name: Android 프로젝트 생성
+        run: npx expo prebuild --platform android --no-install
+
+      - name: APK 빌드
+        working-directory: cardbook/android
+        run: ./gradlew assembleRelease --no-daemon
+
+      - name: APK 올리기
+        uses: actions/upload-artifact@v4
+        with:
+          name: Cardbook-apk
+          path: cardbook/android/app/build/outputs/apk/release/*.apk
