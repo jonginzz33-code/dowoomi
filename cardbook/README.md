@@ -52,5 +52,24 @@ npm start          # Expo 개발 서버
 npm run typecheck
 ```
 
-- **폰에서 바로 확인하기:** `cardbook/` 폴더가 바뀌어 GitHub에 올라가면, Actions의 **Cardbook APK** 작업이 APK를 만듭니다. Actions 탭 → 최신 실행 → Artifacts → `Cardbook-apk`.
-- **Play 스토어 올리기:** 업로드 키로 서명한 AAB 파일이 필요합니다. 출시할 때 EAS Build(`npx eas-cli build -p android`)나 서명 설정을 추가하세요.
+## 빌드와 플레이 스토어 자동 올리기
+
+`.github/workflows/cardbook-build.yml` (조과기록·화장실 앱과 같은 방식)
+
+| 언제 | 무엇을 |
+| --- | --- |
+| 아무 브랜치에 `cardbook/` 를 올릴 때 | APK → Actions 실행 화면 Artifacts `Cardbook-apk` |
+| `main` 에 올리거나 Actions 탭에서 손으로 실행 | 위 + 업로드 키로 서명한 AAB → Releases `cardbook-latest` + 플레이 콘솔 자동 업로드 |
+
+- 버전 번호(versionCode)는 워크플로 실행 번호라 올릴 때마다 자동으로 커집니다. 화면에 보이는 버전 이름은 `app.json` 의 `version`.
+- 업로드 키: `keystore/play-upload.p12.enc` (AES-256 · pbkdf2 200000, 별칭 `upload`). 비밀값 `PLAY_KEY_PASS` 로 풀어서 `plugins/withPlaySigning.js` 가 release 빌드에 서명합니다.
+  - 업로드 키 SHA-1 `9F:B1:6E:D7:CD:54:BF:41:AC:7A:CF:E6:C7:24:37:CC:FD:74:3E:9A`
+- 플레이 콘솔: 비밀값 `PLAY_SERVICE_ACCOUNT_JSON`. 기본은 내부 테스트(`internal`). 저장소 변수 `CARDBOOK_PLAY_TRACK` 을 `alpha` 로 두면 비공개 테스트로 올라갑니다.
+- 패키지 이름: `com.jonginzz.cardbook` (한 번 스토어에 올리면 바꿀 수 없음)
+- 올리기 글(이번에 바뀐 것): `store/whatsnew/whatsnew-ko-KR` (500자 이내)
+
+### 처음 한 번만 사람이 할 일
+1. GitHub 저장소 Settings → Secrets → Actions 에 `PLAY_KEY_PASS`, `PLAY_SERVICE_ACCOUNT_JSON` 추가
+2. 플레이 콘솔에서 앱 만들기 (패키지 `com.jonginzz.cardbook`)
+3. 첫 AAB 는 Releases `cardbook-latest` 에서 받아 플레이 콘솔 내부 테스트에 **직접** 올리기 (Google 정책상 첫 업로드는 손으로)
+4. 플레이 콘솔 '사용자 및 권한'에 서비스 계정 메일을 이 앱 권한으로 추가

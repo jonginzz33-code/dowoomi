@@ -40,7 +40,8 @@
           "cameraPermission": "가지고 있는 카드를 찍어서 도감에 채우기 위해 카메라 권한이 필요해요.",
           "microphonePermission": false
         }
-      ]
+      ],
+      "./plugins/withPlaySigning"
     ],
     "experiments": {
       "typedRoutes": true
